@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>네이버 블로그 글쓰기 클론</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
+  <style>
+    body { font-family: 'Malgun Gothic', sans-serif; }
+    #editor { min-height: 400px; line-height: 1.6; }
+    .toolbar-button { padding: 6px 10px; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 4px; }
+    .toolbar-button:hover { background: #f0f0f0; }
+    .active { background-color: #e5f3ff; border-color: #3399ff; }
+    .post-title { width: 100%; font-size: 1.5rem; font-weight: bold; border: none; outline: none; padding: 10px 0; border-bottom: 2px solid #ccc; margin-bottom: 20px; }
+    .editor-container { border: 1px solid #ddd; background: white; padding: 15px; border-radius: 6px; }
+  </style>
+</head>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-4xl mx-auto">
+    <div class="mb-4">
+      <input type="text" id="post-title" class="post-title" placeholder="제목을 입력하세요" />
+    </div>
+
+    <div class="mb-4 flex flex-wrap gap-2">
+      <button class="toolbar-button" onclick="execCmd('bold')"><i class="fas fa-bold"></i></button>
+      <button class="toolbar-button" onclick="execCmd('italic')"><i class="fas fa-italic"></i></button>
+      <button class="toolbar-button" onclick="execCmd('underline')"><i class="fas fa-underline"></i></button>
+      <button class="toolbar-button" onclick="execCmd('strikeThrough')"><i class="fas fa-strikethrough"></i></button>
+      <button class="toolbar-button" onclick="execCmd('justifyLeft')"><i class="fas fa-align-left"></i></button>
+      <button class="toolbar-button" onclick="execCmd('justifyCenter')"><i class="fas fa-align-center"></i></button>
+      <button class="toolbar-button" onclick="execCmd('justifyRight')"><i class="fas fa-align-right"></i></button>
+      <button class="toolbar-button" onclick="insertImage()"><i class="fas fa-image"></i> 이미지</button>
+    </div>
+
+    <div class="editor-container">
+      <div id="editor" contenteditable="true">
+        <p>여기에 글을 작성하세요...</p>
+      </div>
+    </div>
+
+    <div class="mt-6 flex justify-end gap-2">
+      <button onclick="savePost()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded">임시저장</button>
+      <button onclick="alert('게시되었습니다!')" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded">게시하기</button>
+    </div>
+  </div>
+
+  <script>
+    function execCmd(cmd) {
+      document.execCommand(cmd, false, null);
+    }
+
+    function insertImage() {
+      const url = prompt("이미지 URL을 입력하세요:");
+      if (url) {
+        document.execCommand("insertImage", false, url);
+      }
+    }
+
+    function savePost() {
+      const title = document.getElementById("post-title").value;
+      const content = document.getElementById("editor").innerHTML;
+      const blob = new Blob([`<h1>${title}</h1>` + content], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "blog_post.html";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
